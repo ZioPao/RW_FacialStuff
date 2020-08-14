@@ -46,7 +46,7 @@ namespace FacialStuff
             float verHeadOffset = headOffset.y;
 
             CompBodyAnimator animator = this.CompAnimator;
-            if (animator.BodyAnim != null)
+            if (animator != null && HarmonyPatchesFS.AnimatorIsOpen())
             {
                 horHeadOffset += animator.BodyAnim.headOffset.x;
                 verHeadOffset += animator.BodyAnim.headOffset.y;
@@ -174,7 +174,7 @@ namespace FacialStuff
 
             bool noRenderGoggles = Controller.settings.FilterHats;
 
-            bool showRoyalHeadgear = this.Pawn.royalty?.MostSeniorTitle != null && Controller.settings.ShowRoyalHeadgear;
+            bool showRoyalHeadgear = Pawn.royalty?.MostSeniorTitle != null && Controller.settings.ShowRoyalHeadgear;
             bool noRenderRoofed = animator != null && animator.HideHat && !showRoyalHeadgear;
             bool noRenderBed = Controller.settings.HideHatInBed && !renderBody && !showRoyalHeadgear;
 

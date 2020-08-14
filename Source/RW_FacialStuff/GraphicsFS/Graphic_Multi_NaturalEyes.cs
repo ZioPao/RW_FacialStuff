@@ -56,9 +56,7 @@ namespace FacialStuff.GraphicsFS
 
                 // array[2] = MaskTextures.BlankTexture();
             }
-
-            string sidePath = Path.GetDirectoryName(req.path).Replace(@"\", @"/") + "/" + this.GetPartType() + eyeType + "_" + gender + "_east";
-
+            string sidePath = Path.GetDirectoryName(req.path).Replace(@"\", @"/") + "/" + "Eye_" + eyeType + "_" + gender + "_east";
 
             // 1 texture= 1 eye, blank for the opposite side
             if (ContentFinder<Texture2D>.Get(sidePath))

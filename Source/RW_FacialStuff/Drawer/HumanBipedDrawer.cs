@@ -320,7 +320,7 @@ namespace FacialStuff
                 }
             }
 
-            if (portrait && !HarmonyPatchesFS.AnimatorIsOpen() && !this.Pawn.IsChild())
+            if (portrait && !HarmonyPatchesFS.AnimatorIsOpen())
             {
                 return;
             }
@@ -481,7 +481,7 @@ namespace FacialStuff
                     groundPos.LeftJoint +
                     new Vector3(offsetJoint, -0.301f, 0),
                     drawQuat * Quaternion.AngleAxis(0, Vector3.up),
-                    hipMat,
+                    centerMat,
                     portrait);
 
                 // UnityEngine.Graphics.DrawMesh(handsMesh, center + new Vector3(0, 0.301f, z),
@@ -500,7 +500,7 @@ namespace FacialStuff
                 return;
             }
 
-            if (portrait && !HarmonyPatchesFS.AnimatorIsOpen() && !this.Pawn.IsChild())
+            if (portrait && !HarmonyPatchesFS.AnimatorIsOpen())
             {
                 return;
             }
@@ -1057,26 +1057,15 @@ namespace FacialStuff
                                      TweenThing tweenThing,
                                      bool portrait, bool noTween)
         {
-            if (position == Vector3.zero || handsMesh == null || material == null)
+            if (position == Vector3.zero || handsMesh == null || material == null || quat == null || tweenThing == null)
             {
                 return;
             }
-
-            if (this.ShouldBeIgnored())
+            if (!this.Pawn.Downed || !this.Pawn.Dead)
             {
-                return;
-            }
-
-            if (!HarmonyPatchesFS.AnimatorIsOpen() &&
-                Find.TickManager.TicksGame == this.CompAnimator.LastPosUpdate[(int) tweenThing] ||
-                HarmonyPatchesFS.AnimatorIsOpen() && MainTabWindow_BaseAnimator.Pawn != this.Pawn)
-            {
-                position = this.CompAnimator.LastPosition[(int) tweenThing];
-            }
-            else
-            {
-                Pawn_PathFollower pawnPathFollower = this.Pawn.pather;
-                if (pawnPathFollower != null && pawnPathFollower.MovedRecently(5))
+                if (!HarmonyPatchesFS.AnimatorIsOpen() &&
+                    Find.TickManager.TicksGame == this.CompAnimator.LastPosUpdate[(int) tweenThing] ||
+                    HarmonyPatchesFS.AnimatorIsOpen() && MainTabWindow_BaseAnimator.Pawn != this.Pawn)
                 {
                     noTween = true;
                 }

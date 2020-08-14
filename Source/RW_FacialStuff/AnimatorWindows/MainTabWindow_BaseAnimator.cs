@@ -19,7 +19,6 @@ namespace FacialStuff.AnimatorWindows
 
         public static bool Develop;
 
-        public static bool Panic;
 
         public override void WindowUpdate()
         {
@@ -136,24 +135,17 @@ namespace FacialStuff.AnimatorWindows
             }
         }
 
-        protected BodyAnimDef BodyAnimDef
+        protected void GetBodyAnimDef()
         {
-            get
+            if (CompAnim.BodyAnim == null)
             {
-                BodyAnimDef compAnimBodyAnim = this.CompAnim.BodyAnim;
-                if (compAnimBodyAnim != null && compAnimBodyAnim.thingTarget.NullOrEmpty())
-                {
-                    // ReSharper disable once PossibleNullReferenceException
-                    this.CompAnim.BodyAnim.thingTarget = Pawn.def.ToString();
-                    this.CompAnim.BodyAnim.bodyDrawers = this.CompAnim.Props.bodyDrawers;
-                    this.CompAnim.BodyAnim.handType = this.CompAnim.Props.handType;
-                    //this.CompAnim.BodyAnim.footType = this.CompAnim.Props.footType;
-                    //this.CompAnim.BodyAnim.pawType = this.CompAnim.Props.pawType;
-                    this.CompAnim.BodyAnim.quadruped = this.CompAnim.Props.quadruped;
-                    this.CompAnim.BodyAnim.bipedWithHands = this.CompAnim.Props.bipedWithHands;
-                }
-                return this.CompAnim.BodyAnim;
+                CompAnim.BodyAnim = new BodyAnimDef();
             }
+            CompAnim.BodyAnim.thingTarget = Pawn.def.ToString();
+            CompAnim.BodyAnim.bodyDrawers = this.CompAnim.Props.bodyDrawers;
+            CompAnim.BodyAnim.handType = this.CompAnim.Props.handType;
+            CompAnim.BodyAnim.quadruped = this.CompAnim.Props.quadruped;
+            CompAnim.BodyAnim.bipedWithHands = this.CompAnim.Props.bipedWithHands;
         }
 
         [CanBeNull]
@@ -334,7 +326,8 @@ namespace FacialStuff.AnimatorWindows
 
         protected virtual void DoBasicSettingsMenu(Listing_Standard listing)
         {
-            string label = Pawn.LabelCap + " - " + this.Label + " - " + this.BodyAnimDef.LabelCap;
+            GetBodyAnimDef();
+            string label = Pawn.LabelCap + " - " + this.Label + " - " + CompAnim.BodyAnim.LabelCap;
 
             listing.Label(label);
 
@@ -365,6 +358,8 @@ namespace FacialStuff.AnimatorWindows
 
             listing.CheckboxLabeled("Develop", ref Develop);
             listing.CheckboxLabeled("Colored", ref Colored);
+
+
 
             if (listing.ButtonText("Add 1 keyframe: "))
             {
@@ -855,6 +850,9 @@ namespace FacialStuff.AnimatorWindows
                 buttonRect.x += buttonRect.width + this.Spacing;
             }
         }
+
+        public float lastTime = 0f;
+
         private void DrawTimelineSlider(int count, float width)
         {
             Rect timeline = new Rect(0f, 0f, width, 40f);
@@ -862,10 +860,10 @@ namespace FacialStuff.AnimatorWindows
             if (this.Loop)
             {
 
-                AnimationPercent = Time.realtimeSinceStartup - this.lastTime;
+                AnimationPercent = Time.realtimeSinceStartup - lastTime;
                 if (AnimationPercent >= 1f)
                 {
-                    this.lastTime = Time.realtimeSinceStartup;
+                    lastTime = Time.realtimeSinceStartup;
                     AnimationPercent = 0f;
                 }
 

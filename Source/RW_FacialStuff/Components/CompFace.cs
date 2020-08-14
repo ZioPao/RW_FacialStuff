@@ -579,7 +579,7 @@ namespace FacialStuff
                 return StringsFS.PathHumanlike + "Beards/Beard_Shaved";
             }
 
-            if (def.IsBeardNotHair())
+            if (def.IsVHEhair())
             {
                 return StringsFS.PathHumanlike + "Beards/" + def.texPath;
             }

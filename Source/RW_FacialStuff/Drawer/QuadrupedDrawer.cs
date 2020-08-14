@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using FacialStuff.AnimatorWindows;
+﻿using FacialStuff.AnimatorWindows;
 using FacialStuff.Harmony;
 using RimWorld;
 using UnityEngine;

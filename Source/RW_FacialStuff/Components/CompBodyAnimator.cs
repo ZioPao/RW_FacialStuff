@@ -359,13 +359,13 @@ namespace FacialStuff
                 return;
             }
 
-            //if (Find.TickManager.Paused)
-            //{
-            //    if (!HarmonyPatchesFS.AnimatorIsOpen() || MainTabWindow_BaseAnimator.Pawn != this.Pawn)
-            //    {
-            //        if (!Pawn.IsChild()) return;
-            //    }
-            //}
+            if (Find.TickManager.Paused)
+            {
+                if (!HarmonyPatchesFS.AnimatorIsOpen() || MainTabWindow_BaseAnimator.Pawn != this.Pawn)
+                {
+                    return;
+                }
+            }
 
             if (this.Props.bipedWithHands)
             {
@@ -375,30 +375,22 @@ namespace FacialStuff
                 // Tweener
                 Vector3Tween eqTween = this.Vector3Tweens[(int)HarmonyPatchesFS.equipment];
 
-                FloatTween angleTween = this.AimAngleTween;
-                Vector3Tween leftHand = this.Vector3Tweens[(int)TweenThing.HandLeft];
-                Vector3Tween rightHand = this.Vector3Tweens[(int)TweenThing.HandRight];
-                if (!Find.TickManager.Paused)
-                {
-                    if (leftHand.State == TweenState.Running)
-                    {
-                        leftHand.Update(1f * Find.TickManager.TickRateMultiplier);
-                    }
-                    if (rightHand.State == TweenState.Running)
-                    {
-                        rightHand.Update(1f * Find.TickManager.TickRateMultiplier);
-                    }
-                    if (eqTween.State == TweenState.Running)
-                    {
-                        eqTween.Update(1f * Find.TickManager.TickRateMultiplier);
-                    }
+            FloatTween angleTween = this.AimAngleTween;
+            Vector3Tween leftHand = this.Vector3Tweens[(int)TweenThing.HandLeft];
+            Vector3Tween rightHand = this.Vector3Tweens[(int)TweenThing.HandRight];
 
-                    if (angleTween.State == TweenState.Running)
-                    {
-                        this.AimAngleTween.Update(3f * Find.TickManager.TickRateMultiplier);
-                    }
-
-                    this.CheckMovement();
+            if (leftHand.State == TweenState.Running)
+            {
+                leftHand.Update(1f * Find.TickManager.TickRateMultiplier);
+            }
+            if (rightHand.State == TweenState.Running)
+            {
+                rightHand.Update(1f * Find.TickManager.TickRateMultiplier);
+            }
+            if (eqTween.State == TweenState.Running)
+            {
+                eqTween.Update(1f * Find.TickManager.TickRateMultiplier);
+            }
 
                     if (this.Pawn.IsChild())
                     this.TickDrawers(this.Pawn.Rotation, new PawnGraphicSet(this.Pawn));

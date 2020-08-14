@@ -41,6 +41,7 @@ namespace FacialStuff
         private static void CheckBodyForAddedParts(Hediff hediff, CompBodyAnimator anim, BodyPartRecord leftHand, BodyPartRecord leftArm,
                                       BodyPartRecord rightHand, BodyPartRecord rightArm, BodyPartRecord leftFoot, BodyPartRecord leftLeg, BodyPartRecord rightFoot, BodyPartRecord rightLeg)
         {
+
             if (anim == null)
             {
                 return;
@@ -146,13 +147,20 @@ namespace FacialStuff
 
             if (bodyProps._anim != null && bodyProps._anim.Props.bipedWithHands)
             {
+
                 if (hediff.Part == bodyProps._leftHand)
                 {
+
+                    //Need to add a check if art shoulder exist
+                    Log.Message("No left hand");
+
                     bodyProps._anim.BodyStat.HandLeft = PartStatus.Missing;
                 }
 
                 if (hediff.Part == bodyProps._rightHand)
                 {
+                    Log.Message("No right hand");
+
                     bodyProps._anim.BodyStat.HandRight = PartStatus.Missing;
                 }
 
@@ -211,10 +219,18 @@ namespace FacialStuff
             // Missing parts first, hands and feet can be replaced by arms/legs
             //  Log.Message("Checking missing parts.");
             AddedBodyPartProps addedPartProps = hediff.def?.addedPartProps;
+
+     
+            
             if (addedPartProps == null)
             {
-                //    Log.Message("No added parts found.");
+                Log.Message("No added parts found.");
                 return;
+            }
+            else
+            {
+                Log.Warning("Added part : " + addedPartProps.ToString());
+
             }
 
             if (hediff.def?.defName == null)
@@ -291,6 +307,13 @@ namespace FacialStuff
             }
 
             List<BodyPartRecord> allParts = pawn.RaceProps?.body?.AllParts;
+
+
+            //foreach (BodyPartRecord x in allParts)
+            //{
+            //    Log.Warning("TEST : " + x.Label);
+            //}
+
             if (allParts.NullOrEmpty())
             {
                 //     log += "\n" + "All parts null or empty, return";
@@ -310,13 +333,13 @@ namespace FacialStuff
 
             foreach (Hediff diff in hediffs.Where(diff => diff.def == HediffDefOf.MissingBodyPart))
             {
-                // Log.Message("Checking missing part "+diff.def.defName);
+                Log.Message("[FS] Checking missing part "+diff.def.defName);
                 CheckPart(allParts, diff, face, anim, true);
             }
 
             foreach (Hediff diff in hediffs.Where(diff => diff.def.addedPartProps != null))
             {
-                //  Log.Message("Checking added part on " + pawn + "--"+diff.def.defName);
+                Log.Message("[FS]Checking added part on " + pawn + "--"+diff.def.defName);
                 CheckPart(allParts, diff, face, anim, false);
             }
 

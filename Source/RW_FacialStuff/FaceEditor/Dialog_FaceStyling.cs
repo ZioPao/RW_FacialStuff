@@ -187,6 +187,8 @@ namespace FacialStuff.FaceEditor
         private Vector2 _swatchSize = new Vector2(14, 14);
         public PawnFace PawnFace => this._pawnFace;
 
+        #endregion Private Fields
+
 #endregion Private Fields
 
 #region Public Constructors
@@ -202,10 +204,9 @@ namespace FacialStuff.FaceEditor
             NameBackground = SolidColorMaterials.NewSolidColorTexture(new Color(0f, 0f, 0f, 0.3f));
             HairDefs = DefDatabase<HairDef>.AllDefsListForReading.FindAll(
                                                                                 x => x.hairTags
-                                                                                      .SharesElementWith(VanillaHairTags) && !x.IsBeardNotHair());
+                                                                                      .SharesElementWith(VanillaHairTags) && !x.IsVHEhair());
 
             _eyeDefs = DefDatabase<EyeDef>.AllDefsListForReading;
-            _earDefs = DefDatabase<EarDef>.AllDefsListForReading;
             FullBeardDefs = DefDatabase<BeardDef>.AllDefsListForReading.Where(x => x.beardType == BeardType.FullBeard)
                                                  .ToList();
             LowerBeardDefs = DefDatabase<BeardDef>.AllDefsListForReading.Where(x => x.beardType != BeardType.FullBeard)
@@ -879,7 +880,7 @@ namespace FacialStuff.FaceEditor
                                                                                                                  .Female ||
                                                                                                                   x.hairGender ==
                                                                                                                   HairGender
-                                                                                                                 .FemaleUsually && !x.IsBeardNotHair()
+                                                                                                                 .FemaleUsually && !x.IsVHEhair()
                                                                                                                  ));
                                                HairDefs.SortBy(i => i.LabelCap.ToString());
                                                this.genderTab = GenderTab.Female;
@@ -900,7 +901,7 @@ namespace FacialStuff.FaceEditor
                                                                                                                   .Male ||
                                                                                                                    x.hairGender ==
                                                                                                                    HairGender
-                                                                                                                  .MaleUsually && !x.IsBeardNotHair()
+                                                                                                                  .MaleUsually && !x.IsVHEhair()
                                                                                                                   ));
                                                 HairDefs.SortBy(i => i.LabelCap.ToString());
                                                 this.genderTab = GenderTab.Male;
@@ -917,7 +918,7 @@ namespace FacialStuff.FaceEditor
                                                                                                                    .SharesElementWith(VanillaHairTags) &&
                                                                                                                   x.hairGender ==
                                                                                                                   HairGender
-                                                                                                                 .Any && !x.IsBeardNotHair());
+                                                                                                                 .Any && !x.IsVHEhair());
                                                 HairDefs.SortBy(i => i.LabelCap.ToString());
                                                 this.genderTab = GenderTab.Any;
                                             }, this.genderTab == GenderTab.Any);
@@ -930,7 +931,7 @@ namespace FacialStuff.FaceEditor
                                                 HairDefs = DefDatabase<HairDef>.AllDefsListForReading.FindAll(
                                                                                                               x => x
                                                                                                                   .hairTags
-                                                                                                                  .SharesElementWith(VanillaHairTags) && !x.IsBeardNotHair());
+                                                                                                                  .SharesElementWith(VanillaHairTags) && !x.IsVHEhair());
                                                 HairDefs.SortBy(i => i.LabelCap.ToString());
                                                 this.genderTab = GenderTab.All;
                                             }, this.genderTab == GenderTab.All);
@@ -1120,7 +1121,7 @@ namespace FacialStuff.FaceEditor
         {
             float editorLeft = rect.x;
             float editorTop = 30f + WidgetUtil.SelectionRowHeight;
-            const float editorWidth = 325f;
+            float editorWidth = 325f;
 
             float top = editorTop + 64f;
 
@@ -1385,7 +1386,6 @@ namespace FacialStuff.FaceEditor
             this._reInit = true;
             this.PawnFace.HasSameBeardColor = Rand.Value > 0.3f;
             this.NewHair = PawnHairChooser.RandomHairDefFor(Pawn, Faction.OfPlayer.def);
-            // Pawn.story.melanin = PawnSkinColors.RandomMelanin(Pawn.Faction);
             this.PawnFace.GenerateHairDNA(Pawn, true);
             this.NewHairColor = this.PawnFace.HairColor;
             this.NewBeardColor = this.PawnFace.BeardColor;
@@ -1533,7 +1533,7 @@ namespace FacialStuff.FaceEditor
                                                                                    && (x.hairGender ==
                                                                                        HairGender.Male ||
                                                                                        x.hairGender ==
-                                                                                       HairGender.MaleUsually && !x.IsBeardNotHair()));
+                                                                                       HairGender.MaleUsually && !x.IsVHEhair()));
                     _eyeDefs = DefDatabase<EyeDef>.AllDefsListForReading.FindAll(
                                                                                  x => x.hairGender == HairGender.Male ||
                                                                                       x.hairGender ==
@@ -1557,7 +1557,7 @@ namespace FacialStuff.FaceEditor
                                                                                    && (x.hairGender ==
                                                                                        HairGender.Female ||
                                                                                        x.hairGender ==
-                                                                                       HairGender.FemaleUsually && !x.IsBeardNotHair()));
+                                                                                       HairGender.FemaleUsually && !x.IsVHEhair()));
                     _eyeDefs = DefDatabase<EyeDef>.AllDefsListForReading.FindAll(
                                                                                  x =>
                                                                                      x.hairGender ==
@@ -1914,14 +1914,14 @@ namespace FacialStuff.FaceEditor
 
             float grey = this.PawnFace.Greyness;
             grey = Widgets.HorizontalSlider(
-                set,
-                grey,
-                HairMelanin.GreyRange.min,
-                HairMelanin.GreyRange.max,
-                false,
-                "FacialStuffEditor.Greyness".Translate(),
-                "0",
-                "1");
+                                                  set,
+                                                  grey,
+                                                  HairMelanin.GreyRange.min,
+                                                  HairMelanin.GreyRange.max,
+                                                  false,
+                                                  "FacialStuffEditor.Greyness".Translate(),
+                                                  "0",
+                                                  "1");
 
             /*
             Baldness bald = this.compFace.PawnFace.Baldness;
@@ -2151,14 +2151,14 @@ namespace FacialStuff.FaceEditor
                 WidgetUtil.SelectionRowHeight);
             float melly = this.NewMelanin;
             melly = Widgets.HorizontalSlider(
-                melaninSlider,
-                melly,
-                0f,
-                0.999f,
-                false,
-                "FacialStuffEditor.MelaninLevel".Translate(),
-                "0",
-                "1");
+                                                   melaninSlider,
+                                                   melly,
+                                                   0f,
+                                                   0.999f,
+                                                   false,
+                                                   "FacialStuffEditor.MelaninLevel".Translate(),
+                                                   "0",
+                                                   "1");
 
             // Draw the current color box.
             Rect currentColorRect = new Rect(0, melaninSlider.yMax + MarginFS, 20, 20);
@@ -2272,24 +2272,24 @@ namespace FacialStuff.FaceEditor
             // return GraphicDatabase.Get<Graphic_Multi>(path, shader, Vector2.one, skinColor);
             List<TabRecord> list = new List<TabRecord>();
             TabRecord item = new TabRecord(
-                "HeadType".Translate(),
-                delegate
-                {
-                    HairDefs = DefDatabase<HairDef>.AllDefsListForReading.FindAll(
-                        x =>
-                            x.hairTags
-                                .SharesElementWith(VanillaHairTags)
-                            &&
-                            (x.hairGender ==
-                             HairGender
-                                 .Female ||
-                             x.hairGender ==
-                             HairGender
-                                 .FemaleUsually && !x.IsBeardNotHair()
-                            ));
-                    HairDefs.SortBy(i => i.LabelCap.ToString());
-                    this._specialTab = SpecialTab.Head;
-                }, this._specialTab == SpecialTab.Head);
+                                                 "HeadType".Translate(),
+                                                 delegate
+                                                 {
+                                                     HairDefs = DefDatabase<HairDef>.AllDefsListForReading.FindAll(
+                                                                                                                   x =>
+                                                                                                                       x.hairTags
+                                                                                                                        .SharesElementWith(VanillaHairTags)
+                                                                                                                     &&
+                                                                                                                       (x.hairGender ==
+                                                                                                                        HairGender
+                                                                                                                       .Female ||
+                                                                                                                        x.hairGender ==
+                                                                                                                        HairGender
+                                                                                                                       .FemaleUsually && !x.IsVHEhair()
+                                                                                                                       ));
+                                                     HairDefs.SortBy(i => i.LabelCap.ToString());
+                                                     this._specialTab = SpecialTab.Head;
+                                                 }, this._specialTab == SpecialTab.Head);
             list.Add(item);
 
             TabRecord item2 = new TabRecord(
@@ -2306,7 +2306,7 @@ namespace FacialStuff.FaceEditor
                                                                                                                   .Male ||
                                                                                                                    x.hairGender ==
                                                                                                                    HairGender
-                                                                                                                  .MaleUsually && !x.IsBeardNotHair()
+                                                                                                                  .MaleUsually && !x.IsVHEhair()
                                                                                                                   ));
                                                 HairDefs.SortBy(i => i.LabelCap.ToString());
                                                 this._specialTab = SpecialTab.Body;
@@ -2323,7 +2323,7 @@ namespace FacialStuff.FaceEditor
                                                                                                                    .SharesElementWith(VanillaHairTags) &&
                                                                                                                   x.hairGender ==
                                                                                                                   HairGender
-                                                                                                                 .Any && !x.IsBeardNotHair());
+                                                                                                                 .Any && !x.IsVHEhair());
                                                 HairDefs.SortBy(i => i.LabelCap.ToString());
                                                 this.genderTab = GenderTab.Any;
                                             }, this._specialTab == SpecialTab.Head);
@@ -2461,11 +2461,11 @@ namespace FacialStuff.FaceEditor
             {
 
                 graphic = GraphicDatabase.Get<Graphic_Multi_NaturalHeadParts>(
-                    path,
-                    ShaderDatabase.Cutout,
-                    new Vector2(38f, 38f),
-                    Color.white,
-                    Color.white) as Graphic_Multi_NaturalHeadParts;
+                                                                              path,
+                                                                              ShaderDatabase.Cutout,
+                                                                              new Vector2(38f, 38f),
+                                                                              Color.white,
+                                                                              Color.white) as Graphic_Multi_NaturalHeadParts;
 
             }
             return graphic;
